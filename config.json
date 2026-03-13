@@ -1,0 +1,16 @@
+{
+  "teclado": {
+    "KeyW": "Saltar",
+    "KeyU": "SonidoA",
+    "KeyB": "SonidoB",
+    "ArrowUp": "Arriba",
+    "ArrowDown": "Abajo",
+    "ArrowLeft": "Izquierda",
+    "ArrowRight": "Derecha",
+    "KeyS": "Salir",
+    "KeyP": "Pausar",
+    "KeyF": "Flotar",
+    "KeyN": "Nadar",
+    "Enter": "Iniciar"
+  }
+}
