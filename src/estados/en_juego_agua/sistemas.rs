@@ -1,7 +1,6 @@
-
-use bevy::prelude::*;
-use crate::EstadoJuego;
 use crate::entradas::{Accion, AccionEjecutada};
+use crate::EstadoJuego;
+use bevy::prelude::*;
 
 /// Setup inicial cuando entramos en Jugando
 pub fn entrar_juego() {
@@ -20,9 +19,9 @@ pub fn input_juego(
                 next_state.set(EstadoJuego::Pausa);
                 info!("Pausando desde JUEGO");
             }
-            Accion::MoverseEnTierra => {
+            Accion::Saltar => {
                 next_state.set(EstadoJuego::JugandoEnTierra);
-                info!("Reiniciando en tierra");
+                info!("Saliendo del agua a tierra");
             }
             _ => {}
         }

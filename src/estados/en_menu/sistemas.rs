@@ -1,6 +1,6 @@
-use bevy::prelude::*;
-use crate::EstadoJuego;
 use crate::entradas::{Accion, AccionEjecutada};
+use crate::EstadoJuego;
+use bevy::prelude::*;
 
 /// Al entrar en Menu (setup UI, música, etc.)
 pub fn entrar_menu() {
@@ -15,7 +15,7 @@ pub fn input_menu(
 ) {
     for evento in reader.read() {
         match evento.accion {
-            Accion::MoverseEnTierra => {
+            Accion::Iniciar => {
                 next_state.set(EstadoJuego::JugandoEnTierra);
                 info!("Seleccionado INICIAR desde MENU");
             }
