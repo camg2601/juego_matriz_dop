@@ -20,6 +20,10 @@ pub fn input_juego(
                 next_state.set(EstadoJuego::Pausa);
                 info!("Pausando desde JUEGO");
             }
+            Accion::Reiniciar => {
+                next_state.set(EstadoJuego::Reiniciar);
+                info!("Reiniciando desde juego en tierra");
+            }
             Accion::MoverseEnTierra => {
                 // podría reiniciar nivel si corresponde
             }

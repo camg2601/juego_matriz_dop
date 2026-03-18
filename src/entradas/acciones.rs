@@ -9,6 +9,7 @@ pub enum Accion {
     SonidoB,
     Iniciar,
     Pausar,
+    Reiniciar,
     MoverseEnTierra,
     MoverseEnAgua,
     MoverAdelanteAgua,
