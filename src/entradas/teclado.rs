@@ -8,7 +8,7 @@ pub fn traducir_entradas_a_acciones(
     mut writer: MessageWriter<AccionEjecutada>,
 ) {
     for (tecla, accion) in mapa.teclado.iter() {
-        if teclado.just_pressed(*tecla) {
+        if teclado.pressed(*tecla) {
             writer.write(AccionEjecutada {
                 accion: *accion,
             });

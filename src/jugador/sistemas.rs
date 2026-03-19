@@ -13,8 +13,8 @@ pub fn configurar_visual(mut commands: Commands) {
         },
         Transform::from_xyz(0.0, 0.0, 0.0),
         Jugador,
-        Velocidad { y: 0.0 },
-        Gravedad,
+        Velocidad { x: 0.0, y: 0.0 },
+        Gravedad { t: 1800.0, a: 900.0 },
         EnSuelo(true),
     ));
 }
