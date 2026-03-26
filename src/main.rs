@@ -6,6 +6,7 @@ mod audio;
 mod entradas;
 mod mapas;
 mod estados;
+mod triangulo;
 
 
 
@@ -14,6 +15,7 @@ use estados::en_menu::MenuPlugin;
 use estados::en_pausa::PausaPlugin;
 use estados::en_juego_tierra::JuegoTierraPlugin;
 use estados::en_juego_agua::JuegoAguaPlugin;
+use triangulo::TrianguloPlugin;
 
 
 
@@ -38,6 +40,7 @@ fn main() {
             AudioPlugin,
             FisicasPlugin,
             JugadorPlugin,
+            TrianguloPlugin
         ))
         .run();
 }
