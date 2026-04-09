@@ -19,6 +19,7 @@ impl Default for MapaEntradas {
         teclado.insert(KeyCode::KeyS, Accion::Salir);
         teclado.insert(KeyCode::KeyP, Accion::Pausar);
         teclado.insert(KeyCode::KeyF, Accion::Flotar);
+        teclado.insert(KeyCode::KeyR, Accion::Reiniciar);
        
 
         Self { teclado }

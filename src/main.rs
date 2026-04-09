@@ -6,6 +6,7 @@ mod audio;
 mod entradas;
 mod mapas;
 mod estados;
+mod ui;
 
 
 
@@ -14,6 +15,8 @@ use estados::en_menu::MenuPlugin;
 use estados::en_pausa::PausaPlugin;
 use estados::en_juego_tierra::JuegoTierraPlugin;
 use estados::en_juego_agua::JuegoAguaPlugin;
+use estados::reiniciar_juego::ReiniciarPlugin;
+use ui::TimerJuegoPlugin;
 
 
 
@@ -23,15 +26,19 @@ use fisicas::FisicasPlugin;
 use audio::AudioPlugin;
 use entradas::EntradasPlugin;
 use mapas::MapasPlugin;
+use estados::EstadoPausa;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .init_state::<EstadoJuego>()
+        .init_state::<EstadoPausa>()
         .add_plugins((
             MapasPlugin,
             MenuPlugin,
             PausaPlugin,
+            ReiniciarPlugin,
+            TimerJuegoPlugin,
             JuegoTierraPlugin,
             JuegoAguaPlugin,
             EntradasPlugin,

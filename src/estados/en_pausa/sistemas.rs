@@ -1,23 +1,27 @@
 use bevy::prelude::*;
-use crate::{EstadoJuego};
+
+use crate::{EstadoJuego, estados::EstadoPausa};
 use crate::entradas::{Accion, AccionEjecutada};
 
-/// Al entrar en pausa
-pub fn entrar_pausa() {
-    info!("Entrando en PAUSA");
-    // Aquí puedes spawnear UI, oscurecer pantalla, pausar audio, etc.
+pub fn limpiar_acciones_pendientes(mut mensajes: ResMut<Messages<AccionEjecutada>>) {
+    mensajes.clear();
 }
 
-/// Lee SOLO acciones abstractas (no teclas)
 pub fn input_pausa(
     mut reader: MessageReader<AccionEjecutada>,
-    mut next_state: ResMut<NextState<EstadoJuego>>,
+    mut next_state_juego: ResMut<NextState<EstadoJuego>>,
+    mut next_state_pausa: ResMut<NextState<EstadoPausa>>,
 ) {
     for evento in reader.read() {
         match evento.accion {
             Accion::Pausar => {
-                next_state.set(EstadoJuego::JugandoEnTierra);
+                next_state_pausa.set(EstadoPausa::Activo);
                 info!("Reanudando juego desde PAUSA");
+            }
+            Accion::Reiniciar => {
+                next_state_pausa.set(EstadoPausa::Activo);
+                next_state_juego.set(EstadoJuego::Reiniciar);
+                info!("Reinicio solicitado desde PAUSA");
             }
 
             Accion::Salir => {
@@ -27,9 +31,4 @@ pub fn input_pausa(
             _ => {}
         }
     }
-}
-
-/// Al salir de pausa
-pub fn salir_pausa() {
-    info!("Saliendo de PAUSA");
 }
