@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::EstadoJuego;
+use crate::{EstadoJuego, estados::EstadoPausa};
 
 pub mod sistemas;
 
@@ -11,7 +11,9 @@ impl Plugin for JuegoAguaPlugin {
             .add_systems(OnEnter(EstadoJuego::JugandoEnAgua), sistemas::entrar_juego)
             .add_systems(
                 FixedUpdate,
-                sistemas::input_juego.run_if(in_state(EstadoJuego::JugandoEnAgua)),
+                sistemas::input_juego
+                    .run_if(in_state(EstadoJuego::JugandoEnAgua))
+                    .run_if(in_state(EstadoPausa::Activo)),
             )
             .add_systems(OnExit(EstadoJuego::JugandoEnAgua), sistemas::salir_juego);
     }

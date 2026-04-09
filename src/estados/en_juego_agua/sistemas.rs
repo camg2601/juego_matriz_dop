@@ -1,6 +1,7 @@
 
 use bevy::prelude::*;
 use crate::EstadoJuego;
+use crate::estados::EstadoPausa;
 use crate::entradas::{Accion, AccionEjecutada};
 
 /// Setup inicial cuando entramos en Jugando
@@ -12,20 +13,21 @@ pub fn entrar_juego() {
 /// Input de juego vía acciones (no teclas)
 pub fn input_juego(
     mut reader: MessageReader<AccionEjecutada>,
-    mut next_state: ResMut<NextState<EstadoJuego>>,
+    mut next_state_juego: ResMut<NextState<EstadoJuego>>,
+    mut next_state_pausa: ResMut<NextState<EstadoPausa>>,
 ) {
     for evento in reader.read() {
         match evento.accion {
             Accion::Pausar => {
-                next_state.set(EstadoJuego::Pausa);
+                next_state_pausa.set(EstadoPausa::Pausa);
                 info!("Pausando desde JUEGO");
             }
             Accion::Reiniciar => {
-                next_state.set(EstadoJuego::Reiniciar);
+                next_state_juego.set(EstadoJuego::Reiniciar);
                 info!("Reiniciando desde juego en agua");
             }
             Accion::MoverseEnTierra => {
-                next_state.set(EstadoJuego::JugandoEnTierra);
+                next_state_juego.set(EstadoJuego::JugandoEnTierra);
                 info!("Reiniciando en tierra");
             }
             _ => {}

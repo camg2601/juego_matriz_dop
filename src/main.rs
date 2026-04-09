@@ -26,11 +26,13 @@ use fisicas::FisicasPlugin;
 use audio::AudioPlugin;
 use entradas::EntradasPlugin;
 use mapas::MapasPlugin;
+use estados::EstadoPausa;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .init_state::<EstadoJuego>()
+        .init_state::<EstadoPausa>()
         .add_plugins((
             MapasPlugin,
             MenuPlugin,

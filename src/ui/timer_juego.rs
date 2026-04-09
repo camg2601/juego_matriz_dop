@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 
 use crate::EstadoJuego;
+use crate::estados::EstadoPausa;
 
 #[derive(Resource, Default)]
 pub struct TimerJuego {
@@ -21,10 +22,12 @@ impl Plugin for TimerJuegoPlugin {
             .add_systems(Startup, crear_ui_timer)
             .add_systems(
                 Update,
-                actualizar_timer.run_if(
-                    in_state(EstadoJuego::JugandoEnTierra)
-                        .or(in_state(EstadoJuego::JugandoEnAgua)),
-                ),
+                actualizar_timer
+                    .run_if(
+                        in_state(EstadoJuego::JugandoEnTierra)
+                            .or(in_state(EstadoJuego::JugandoEnAgua)),
+                    )
+                    .run_if(in_state(EstadoPausa::Activo)),
             )
             .add_systems(Update, (actualizar_texto_timer, actualizar_visibilidad_timer));
     }
@@ -77,13 +80,14 @@ fn actualizar_texto_timer(timer: Res<TimerJuego>, mut query: Query<&mut Text, Wi
 }
 
 fn actualizar_visibilidad_timer(
-    estado: Res<State<EstadoJuego>>,
+    estado_juego: Res<State<EstadoJuego>>,
+    estado_pausa: Res<State<EstadoPausa>>,
     mut query: Query<&mut Visibility, With<TimerJuegoContenedor>>,
 ) {
     let visible = matches!(
-        estado.get(),
-        EstadoJuego::JugandoEnTierra | EstadoJuego::JugandoEnAgua | EstadoJuego::Pausa
-    );
+        estado_juego.get(),
+        EstadoJuego::JugandoEnTierra | EstadoJuego::JugandoEnAgua
+    ) || matches!(estado_pausa.get(), EstadoPausa::Pausa);
 
     for mut visibilidad in &mut query {
         *visibilidad = if visible {
