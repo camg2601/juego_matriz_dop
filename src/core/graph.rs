@@ -312,10 +312,17 @@ impl Graph {
 
         self.active_levels.push(level_index);
 
-        if self.active_levels.len() > self.max_active_levels {
-            let old_level = self.active_levels.remove(0);
-            self.reset_level(old_level);
-        }
+        // if self.active_levels.len() > self.max_active_levels {
+        //     let old_level = self.active_levels.remove(0);
+        //     self.reset_level(old_level);
+        // }
+    }
+
+    pub fn get_node_level(&self, node_id: usize) -> Option<usize> {
+        self.nodes
+            .iter()
+            .find(|n| n.id == node_id)
+            .map(|n| n.level)
     }
 
     pub fn reset_level(&mut self, level_index: usize) {

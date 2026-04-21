@@ -12,7 +12,6 @@ pub fn traducir_entradas_a_acciones(
             writer.write(AccionEjecutada {
                 accion: *accion,
             });
-            println!("Acción ejecutada: {:?}", accion);
         }
     }
 }

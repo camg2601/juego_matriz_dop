@@ -87,7 +87,7 @@ pub fn spawn_opciones(
         };
 
         let count = targets.len().max(1);
-        let screen_w = 800.0; // o mejor usar cámara si luego la haces dinámica
+        let screen_w = 1000.0;
         let spacing = screen_w / (count as f32 + 1.0);
 
         let x = (i as f32 + 1.0) * spacing - screen_w / 2.0;

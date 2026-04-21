@@ -23,6 +23,7 @@ pub fn start_core_thread(
     thread::spawn(move || {
         let mut graph: Option<Graph> = None;
         let mut current_level = 1;
+        let mut max_level_reached = 1;
 
         while let Ok(request) = rx.recv() {
             match request {
@@ -44,15 +45,21 @@ pub fn start_core_thread(
                     let _ = tx.send(CoreResponse::GraphUpdated(dto));
                 }
 
-                CoreRequest::PlayerEnteredNode { node_id: _ } => {
+                CoreRequest::PlayerEnteredNode { node_id} => {
                     println!("Jugador entro al nodo");
 
                     if let Some(g) = graph.as_mut() {
-                        g.create_edge(current_level);
-                        current_level += 1;
+                        let node_level = g.get_node_level(node_id).unwrap_or(0);
+
+                        if node_level >= max_level_reached {
+                            g.create_edge(current_level);
+                            current_level += 1;
+
+                            max_level_reached = node_level + 1;
+                        }
 
                         let dto = g.to_dto();
-                        let _ = tx.send(CoreResponse::GraphUpdated(dto));
+                        tx.send(CoreResponse::GraphUpdated(dto)).unwrap();
                     }
                 }
             }
