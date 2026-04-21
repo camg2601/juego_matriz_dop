@@ -2757,7 +2757,11 @@ name = "juli_game"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "crossbeam-channel",
+ "fastrand",
  "rand",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

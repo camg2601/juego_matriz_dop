@@ -13,4 +13,10 @@ pub struct Gravedad {
 }
 
 #[derive(Component)]
+pub struct Aceleracion {
+    pub t: f32,
+    pub a: f32,
+}
+
+#[derive(Component)]
 pub struct EnSuelo(pub bool);

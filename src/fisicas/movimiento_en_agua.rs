@@ -6,14 +6,9 @@ pub fn sistema_movimiento_en_agua(
     mut reader: MessageReader<AccionEjecutada>,
     time: Res<Time<Fixed>>,
     teclado: Res<ButtonInput<KeyCode>>,
-    mut query: Query<(&mut Transform, &mut Velocidad, &Gravedad)>,
+    mut query: Query<(&mut Transform, &mut Velocidad, &Gravedad, &Aceleracion)>,
 ) {
-    // Parámetros físicos del agua
-    let fuerza_nado = 400.0;     // Fuerza al "nadar"
-    let aceleración_nado = 600.0;
-    let gravedad_agua = 300.0;  // Mucho menor que en tierra
-    let rozamiento = 0.92;      // Amortiguación del movimiento
-    let flotabilidad = 250.0;   // Empuje hacia arriba
+    
     let deceleracion = 200.0;
 
     let mut quiere_nadar = false;
@@ -33,20 +28,20 @@ pub fn sistema_movimiento_en_agua(
         }
     }
 
-    for (mut transform, mut velocidad, gravedad) in &mut query {
+    for (mut transform, mut velocidad, gravedad, aceleracion) in &mut query {
         // Impulso hacia arriba al nadar
         
 /* */
         // Gravedad reducida por el agua
 
         if nadar_arriba {
-            velocidad.y += aceleración_nado * time.delta_secs();
+            velocidad.y += aceleracion.a * time.delta_secs();
         } else if nadar_abajo {
-            velocidad.y -= aceleración_nado * time.delta_secs();
+            velocidad.y -= aceleracion.a * time.delta_secs();
         } else if nadar_derecha {
-            velocidad.x += aceleración_nado * time.delta_secs();
+            velocidad.x += aceleracion.a * time.delta_secs();
         } else if nadar_izquierda {
-            velocidad.x -= aceleración_nado * time.delta_secs();
+            velocidad.x -= aceleracion.a * time.delta_secs();
         }
 
 

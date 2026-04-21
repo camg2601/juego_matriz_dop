@@ -6,11 +6,10 @@ pub fn sistema_salto_y_gravedad(
     mut reader: MessageReader<AccionEjecutada>,
     teclado: Res<ButtonInput<KeyCode>>,
     time: Res<Time<Fixed>>,
-    mut query: Query<(&mut Transform, &mut Velocidad, &mut EnSuelo, &Gravedad)>,
+    mut query: Query<(&mut Transform, &mut Velocidad, &mut EnSuelo, &Gravedad, &Aceleracion)>,
 ) {
     let fuerza_salto = 600.0;
     let velocidad_max = 300.0;
-    let aceleracion = 2000.0;
     let friccion = 100.0;
     let suelo_y = 0.0;
 
@@ -27,12 +26,12 @@ pub fn sistema_salto_y_gravedad(
         }
     }
 
-    for (mut transform, mut velocidad, mut en_suelo, gravedad) in &mut query {
+    for (mut transform, mut velocidad, mut en_suelo, gravedad, aceleracion) in &mut query {
 
         if mover_derecha {
-            velocidad.x += aceleracion * time.delta_secs();
+            velocidad.x += aceleracion.t * time.delta_secs();
         } else if mover_izquierda {
-            velocidad.x -= aceleracion * time.delta_secs();
+            velocidad.x -= aceleracion.t * time.delta_secs();
         }
 
         velocidad.x = velocidad.x.clamp(-velocidad_max, velocidad_max);

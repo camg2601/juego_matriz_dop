@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::fisicas::{Velocidad, Gravedad, EnSuelo};
+use crate::fisicas::{Velocidad, Gravedad, EnSuelo, Aceleracion};
 use crate::jugador::componentes::Jugador;
 
 pub fn configurar_visual(mut commands: Commands) {
@@ -15,6 +15,7 @@ pub fn configurar_visual(mut commands: Commands) {
         Jugador,
         Velocidad { x: 0.0, y: 0.0 },
         Gravedad { t: 1800.0, a: 900.0 },
+        Aceleracion { t: 2000.0, a: 600.0 },
         EnSuelo(true),
     ));
 }
