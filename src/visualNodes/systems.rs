@@ -25,7 +25,7 @@ pub fn recibir_grafo(
                             }
                         );
 
-                        println!("🎯 Nodo inicial: {}", start_node.id);
+                        println!("Nodo inicial: {}", start_node.id);
                     }
                 }
 
