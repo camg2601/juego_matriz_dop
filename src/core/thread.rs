@@ -22,7 +22,7 @@ pub fn start_core_thread(
 ) {
     thread::spawn(move || {
         let mut graph: Option<Graph> = None;
-        let mut current_level = 1;
+        let mut next_level = 1;
         let mut max_level_reached = 1;
 
         while let Ok(request) = rx.recv() {
@@ -32,12 +32,9 @@ pub fn start_core_thread(
                     let mut rng = fastrand::Rng::new();
                     let mut g = Graph::new(rng.u32(10000..99999));
 
-                    g.create_edge(current_level);
-                    current_level += 1;
-
-                    g.create_edge(current_level);
-                    current_level += 1;
-
+                    g.create_edge(1);
+                    next_level = 2;
+                    max_level_reached = 1;
 
                     graph = Some(g);
 
@@ -45,21 +42,19 @@ pub fn start_core_thread(
                     let _ = tx.send(CoreResponse::GraphUpdated(dto));
                 }
 
-                CoreRequest::PlayerEnteredNode { node_id} => {
-                    println!("Jugador entro al nodo");
-
+                CoreRequest::PlayerEnteredNode { node_id } => {
                     if let Some(g) = graph.as_mut() {
+
                         let node_level = g.get_node_level(node_id).unwrap_or(0);
 
-                        if node_level >= max_level_reached {
-                            g.create_edge(current_level);
-                            current_level += 1;
-
-                            max_level_reached = node_level + 1;
+                        if g.get_active_levels().len() == 1 || node_level == max_level_reached {
+                            g.create_edge(next_level);
+                            next_level += 1;
+                            max_level_reached += 1;
                         }
 
                         let dto = g.to_dto();
-                        tx.send(CoreResponse::GraphUpdated(dto)).unwrap();
+                        let _ = tx.send(CoreResponse::GraphUpdated(dto));
                     }
                 }
             }

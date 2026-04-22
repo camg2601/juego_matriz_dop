@@ -1,12 +1,7 @@
 use bevy::prelude::*;
 use crate::visualNodes::{CoreChannels, GameState};
 use crate::core::{CoreRequest, CoreResponse};
-use crate::jugador::componentes::Jugador;
 use crate::visualNodes::components::*;
-
-// =========================
-// 📩 Recibir grafo del core
-// =========================
 
 pub fn recibir_grafo(
     mut state: ResMut<GameState>,
@@ -17,10 +12,20 @@ pub fn recibir_grafo(
             CoreResponse::GraphUpdated(dto) => {
                 state.graph = Some(dto.clone());
 
-                // si no hay nodo actual, tomar el primero
                 if state.current_node.is_none() {
-                    if let Some(n) = dto.nodes.first() {
-                        state.current_node = Some(n.id);
+                    if let Some(start_node) = dto.nodes
+                        .iter()
+                        .find(|n| n.level == 1)
+                    {
+                        state.current_node = Some(start_node.id);
+
+                        let _ = channels.tx.send(
+                            CoreRequest::PlayerEnteredNode {
+                                node_id: start_node.id,
+                            }
+                        );
+
+                        println!("🎯 Nodo inicial: {}", start_node.id);
                     }
                 }
 
@@ -29,10 +34,6 @@ pub fn recibir_grafo(
         }
     }
 }
-
-// =========================
-// 🧱 Mostrar opciones
-// =========================
 
 pub fn spawn_opciones(
     mut commands: Commands,
@@ -43,7 +44,6 @@ pub fn spawn_opciones(
         return;
     }
 
-    // limpiar anteriores
     for e in query.iter() {
         commands.entity(e).despawn();
     }
@@ -58,7 +58,6 @@ pub fn spawn_opciones(
         None => return,
     };
 
-    // buscar conexiones
     let mut targets = Vec::new();
 
     for (a, b) in &graph.edges {
@@ -74,10 +73,8 @@ pub fn spawn_opciones(
     println!("Edges: {:?}", graph.edges);
     println!("Targets: {:?}", targets);
 
-    // dibujar cuadros
     for (i, target) in targets.iter().enumerate() {
 
-        // 🔍 buscar info del nodo en el DTO
         let node_data = graph.nodes.iter().find(|n| n.id == *target);
 
         let (nivel, objetivo) = if let Some(n) = node_data {
@@ -105,52 +102,11 @@ pub fn spawn_opciones(
         .with_children(|parent| {
             parent.spawn((
                 Text2d::new(format!("L{}: {}", nivel, objetivo)),
-                Transform::from_xyz(0.0, 30.0, 1.0), // arriba del cuadro
+                Transform::from_xyz(0.0, 30.0, 1.0),
             ));
         });
     }
 }
-
-// =========================
-// 🎮 Input para moverse
-// =========================
-
-pub fn input_movimiento_grafo(
-    keyboard: Res<ButtonInput<KeyCode>>,
-    mut state: ResMut<GameState>,
-    channels: Res<CoreChannels>,
-    player_q: Query<&Transform, With<Jugador>>,
-    nodos_q: Query<(&Transform, &NodoSeleccion)>,
-) {
-    if !keyboard.just_pressed(KeyCode::KeyM) {
-        return;
-    }
-
-    let player_tf = match player_q.single() {
-        Ok(t) => t,
-        _ => return,
-    };
-
-    for (tf, nodo) in nodos_q.iter() {
-        let dist = player_tf.translation.distance(tf.translation);
-
-        if dist < 40.0 {
-            // cambiar nodo actual
-            state.current_node = Some(nodo.id);
-
-            // avisar al core
-            let _ = channels.tx.send(CoreRequest::PlayerEnteredNode {
-                node_id: nodo.id,
-            });
-
-            println!("➡️ Movido a nodo {}", nodo.id);
-        }
-    }
-}
-
-// =========================
-// 📝 UI
-// =========================
 
 pub fn setup_ui(mut commands: Commands) {
     commands.spawn((
@@ -164,10 +120,6 @@ pub fn setup_ui(mut commands: Commands) {
         TextoUI,
     ));
 }
-
-// =========================
-// 🔄 Actualizar UI
-// =========================
 
 pub fn actualizar_ui(
     state: Res<GameState>,
@@ -191,6 +143,126 @@ pub fn actualizar_ui(
                 node.objective
             );
         }
+    }
+}
+
+pub fn minimapa(
+    mut commands: Commands,
+    state: Res<GameState>,
+    time: Res<Time>,
+    query: Query<Entity, With<MiniMapa>>,
+) {
+    for e in query.iter() {
+        commands.entity(e).despawn();
+    }
+
+    let graph = match &state.graph {
+        Some(g) => g,
+        None => return,
+    };
+
+    let current = state.current_node;
+
+    let origin = Vec2::new(300.0, 350.0); // ajusta esto
+
+    let width = 300.0;
+    let height = 200.0;
+
+
+    commands.spawn((
+        Sprite {
+            color: Color::srgba(0.0, 0.0, 0.0, 0.5),
+            custom_size: Some(Vec2::new(width, height)),
+            ..default()
+        },
+        Transform::from_xyz(
+            origin.x + width / 2.0,
+            origin.y - height / 2.0,
+            0.0,
+        ),
+        MiniMapa,
+    ));
+
+    let mut levels: Vec<usize> = graph
+        .nodes
+        .iter()
+        .map(|n| n.level)
+        .filter(|lvl| *lvl > 0)
+        .collect();
+
+    levels.sort();
+    levels.dedup();
+
+    let levels_count = levels.len().max(1);
+    let x_spacing = width / (levels_count as f32 + 1.0);
+
+    let mut positions = std::collections::HashMap::new();
+
+    for (lvl_idx, lvl) in levels.iter().enumerate() {
+        let nodes: Vec<_> = graph
+            .nodes
+            .iter()
+            .filter(|n| n.level == *lvl)
+            .collect();
+
+        let x = origin.x + (lvl_idx as f32 + 1.0) * x_spacing;
+
+        let count = nodes.len().max(1);
+        let y_spacing = height / (count as f32 + 1.0);
+
+        for (i, node) in nodes.iter().enumerate() {
+            let y = origin.y - (i as f32 + 1.0) * y_spacing;
+
+            positions.insert(node.id, Vec3::new(x, y, 10.0));
+        }
+    }
+
+    for (a, b) in &graph.edges {
+        if let (Some(pa), Some(pb)) = (positions.get(a), positions.get(b)) {
+            let delta = *pb - *pa;
+            let length = delta.length();
+
+            let angle = delta.y.atan2(delta.x) + std::f32::consts::FRAC_PI_2;
+
+            commands.spawn((
+                Sprite {
+                    color: Color::srgb(0.0, 1.0, 0.0),
+                    custom_size: Some(Vec2::new(2.0, length)), // 👈 ojo aquí
+                    ..default()
+                },
+                Transform {
+                    translation: (*pa + *pb) / 2.0,
+                    rotation: Quat::from_rotation_z(angle),
+                    ..default()
+                },
+                MiniMapa,
+            ));
+        }
+    }
+
+    for (id, pos) in positions {
+        let mut color = Color::srgb(1.0, 0.0, 0.0);
+
+        if Some(id) == current {
+            let t = time.elapsed_secs();
+            let blink = (t * 5.0).sin() > 0.0;
+
+            color = if blink {
+                Color::WHITE
+            } else {
+                Color::srgb(1.0, 0.0, 0.0)
+            };
+        }
+
+        commands.spawn((
+            Sprite {
+                color,
+                custom_size: Some(Vec2::new(8.0, 8.0)),
+                ..default()
+            },
+            Transform::from_translation(pos),
+            MiniMapa,
+        ));
     }
 }
 

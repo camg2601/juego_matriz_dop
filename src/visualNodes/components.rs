@@ -6,7 +6,7 @@ pub struct NodoSeleccion {
 }
 
 #[derive(Component)]
-pub struct NodoActual;
+pub struct TextoUI;
 
 #[derive(Component)]
-pub struct TextoUI;
+pub struct MiniMapa;

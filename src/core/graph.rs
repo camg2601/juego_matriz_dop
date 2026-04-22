@@ -77,6 +77,18 @@ impl Graph {
         }
     }
 
+    pub fn get_active_levels(&self) -> Vec<usize> {
+        let mut levels: Vec<usize> = self.nodes
+            .iter()
+            .filter(|n| n.active)
+            .map(|n| n.level)
+            .collect();
+
+        levels.sort();
+        levels.dedup();
+        levels
+    }
+
     fn hash(x: u32) -> u32 {
         x.wrapping_mul(1664525).wrapping_add(1013904223)
     }
@@ -229,6 +241,7 @@ impl Graph {
 
         // 🧠 seleccionar nodos y asignar objetivos
         for i in 0..count {
+            println!("{:?}", free_nodes);
             let node_id = free_nodes[i];
 
             let obj = if level_index == 1 {
@@ -312,10 +325,10 @@ impl Graph {
 
         self.active_levels.push(level_index);
 
-        // if self.active_levels.len() > self.max_active_levels {
-        //     let old_level = self.active_levels.remove(0);
-        //     self.reset_level(old_level);
-        // }
+        if self.active_levels.len() > self.max_active_levels {
+            let old_level = self.active_levels.remove(0);
+            self.reset_level(old_level);
+        }
     }
 
     pub fn get_node_level(&self, node_id: usize) -> Option<usize> {

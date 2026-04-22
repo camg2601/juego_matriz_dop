@@ -3,6 +3,7 @@ use bevy::prelude::*;
 pub mod componentes;
 pub mod movimiento_en_tierra;
 pub mod movimiento_en_agua;
+pub mod movimiento_grafo;
 
 pub use componentes::*;
 use crate::EstadoJuego;
@@ -22,6 +23,7 @@ impl Plugin for FisicasPlugin {
             movimiento_en_agua::sistema_movimiento_en_agua
                 .run_if(in_state(EstadoJuego::JugandoEnAgua)),
         )
+        .add_systems(Update, movimiento_grafo::input_movimiento_grafo)
         ;
     }
 }

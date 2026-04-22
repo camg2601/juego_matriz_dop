@@ -7,15 +7,14 @@ pub mod components;
 pub mod resources;
 pub mod systems;
 
-pub use components::{NodoSeleccion, TextoUI};
 pub use resources::{CoreChannels, GameState};
 pub use systems::{
     recibir_grafo,
     spawn_opciones,
-    input_movimiento_grafo,
     setup_ui,
     actualizar_ui,
     iniciar_partida,
+    minimapa,
 };
 
 pub struct VisualNodesPlugin;
@@ -30,7 +29,7 @@ impl Plugin for VisualNodesPlugin {
             recibir_grafo,
             spawn_opciones,
             actualizar_ui,
-            input_movimiento_grafo,
+            minimapa,
         ));
     }
 }
