@@ -9,6 +9,8 @@ mod mapas;
 mod estados;
 mod core;
 mod visualNodes;
+mod objetivos;
+mod entities;
 
 
 
@@ -28,6 +30,7 @@ use fisicas::FisicasPlugin;
 use audio::AudioPlugin;
 use entradas::EntradasPlugin;
 use mapas::MapasPlugin;
+use entities::EntitiesPlugin;
 
 fn main() {
 
@@ -55,6 +58,7 @@ fn main() {
             FisicasPlugin,
             JugadorPlugin,
             VisualNodesPlugin,
+            EntitiesPlugin,
         ))
         .run();
 }

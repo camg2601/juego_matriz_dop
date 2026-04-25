@@ -21,7 +21,8 @@ pub enum Accion {
     MoverDerechaTierra,   
     Salir,
     Flotar,
-    NavegarGrafo
+    NavegarGrafo,
+    EliminarEnemigo,
 }
 
 #[derive(Message)]

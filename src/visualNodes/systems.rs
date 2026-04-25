@@ -1,4 +1,6 @@
 use bevy::prelude::*;
+use crate::entradas::{Accion, AccionEjecutada};
+use crate::estados::EstadoJuego;
 use crate::visualNodes::{CoreChannels, GameState};
 use crate::core::{CoreRequest, CoreResponse};
 use crate::visualNodes::components::*;
@@ -6,11 +8,26 @@ use crate::visualNodes::components::*;
 pub fn recibir_grafo(
     mut state: ResMut<GameState>,
     channels: Res<CoreChannels>,
+    mut reader: MessageReader<AccionEjecutada>,
+    mut next_state: ResMut<NextState<EstadoJuego>>,
 ) {
     while let Ok(msg) = channels.rx.try_recv() {
         match msg {
             CoreResponse::GraphUpdated(dto) => {
                 state.graph = Some(dto.clone());
+
+                let mut sale_transicion = false;
+
+                for evento in reader.read() {
+                    match evento.accion {
+                        Accion::NavegarGrafo => { sale_transicion = true },
+                        _ => { continue }
+                    }
+                }
+
+                if sale_transicion {
+                    next_state.set(EstadoJuego::JugandoEnAgua);
+                }
 
                 if state.current_node.is_none() {
                     if let Some(start_node) = dto.nodes

@@ -14,6 +14,7 @@ pub struct Node {
     pub seed: u32,
     pub objective: String,
     pub level: usize,
+    pub clear: bool,
 }
 
 pub struct Graph {
@@ -39,6 +40,7 @@ impl Graph {
                 seed: seed.wrapping_add((i as u32).wrapping_mul(0x9E3779B9)),
                 objective: String::new(),
                 level: 0,
+                clear: false,
             });
         }
 

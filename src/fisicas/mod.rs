@@ -16,12 +16,12 @@ impl Plugin for FisicasPlugin {
         app.add_systems(
             FixedUpdate,
             movimiento_en_tierra::sistema_salto_y_gravedad
-                .run_if(in_state(EstadoJuego::JugandoEnTierra)),
+                .run_if(in_state(EstadoJuego::JugandoEnTierra).or(in_state(EstadoJuego::Exterminio))),
         )
         .add_systems(
             FixedUpdate,
             movimiento_en_agua::sistema_movimiento_en_agua
-                .run_if(in_state(EstadoJuego::JugandoEnAgua)),
+                .run_if(in_state(EstadoJuego::JugandoEnAgua).or(in_state(EstadoJuego::Exterminio))),
         )
         .add_systems(Update, movimiento_grafo::input_movimiento_grafo)
         ;
