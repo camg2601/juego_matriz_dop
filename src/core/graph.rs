@@ -243,7 +243,6 @@ impl Graph {
 
         // 🧠 seleccionar nodos y asignar objetivos
         for i in 0..count {
-            println!("{:?}", free_nodes);
             let node_id = free_nodes[i];
 
             let obj = if level_index == 1 {

@@ -8,7 +8,7 @@ use bevy::prelude::*;
 
 use std::collections::HashMap;
 
-use crate::entities::{components::Enemy, entity_types::EnemyType, resources::{EnemyHealths, EnemyWeights}};
+use crate::{entities::{components::Enemy, entity_types::EnemyType, resources::{EnemyHealths, EnemySpawnTimer, EnemyWeights}}, estados::EstadoJuego};
 
 fn pick_enemy(weights: &HashMap<EnemyType, f32>) -> EnemyType {
     let total: f32 = weights.values().sum();
@@ -28,10 +28,18 @@ fn pick_enemy(weights: &HashMap<EnemyType, f32>) -> EnemyType {
 
 pub fn spawn_enemies(
     mut commands: Commands,
+    time: Res<Time>,
+    mut timer: ResMut<EnemySpawnTimer>,
     weights: Res<EnemyWeights>,
     healths: Res<EnemyHealths>,
     windows: Query<&Window>,
 ) {
+    timer.0.tick(time.delta());
+
+    if !timer.0.just_finished() {
+        return;
+    }
+
     let window = windows.single().unwrap();
 
     let mut rng = fastrand::Rng::new();
@@ -67,9 +75,12 @@ pub fn spawn_enemies(
 pub fn despawn_enemies(
     mut commands: Commands,
     query: Query<Entity, With<Enemy>>,
+    mut next_state: ResMut<NextState<EstadoJuego>>,
 ) {
     for e in query.iter() {
         commands.entity(e).despawn();
     }
+
+    next_state.set(EstadoJuego::JugandoEnAgua);
 }
 

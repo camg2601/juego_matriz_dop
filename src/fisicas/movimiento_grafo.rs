@@ -37,7 +37,6 @@ pub fn input_movimiento_grafo(
                     node_id: nodo.id,
                 });
 
-                println!("Movido a nodo {}", nodo.id);
             }
         }
     }

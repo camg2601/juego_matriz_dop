@@ -4,3 +4,6 @@ use bevy::prelude::Startup;
 use bevy::prelude::Update;
 
 pub mod systems;
+pub mod components;
+pub mod resources;
+pub mod events;

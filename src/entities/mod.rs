@@ -1,14 +1,19 @@
 use std::collections::HashMap;
 
 use bevy::app::FixedUpdate;
+use bevy::app::Update;
 use bevy::ecs::schedule::IntoScheduleConfigs;
 use bevy::prelude::Plugin;
 use bevy::prelude::App;
 use bevy::state::condition::in_state;
+use bevy::state::state::OnEnter;
+use bevy::time::Timer;
+use bevy::time::TimerMode;
 
 use crate::entities::entity_types::EnemyType;
 use crate::entities::resources::EnemyHealths;
 use crate::entities::resources::EnemyWeights;
+use crate::entities::resources::EnemySpawnTimer;
 use crate::EstadoJuego;
 
 pub mod systems;
@@ -39,7 +44,12 @@ impl Plugin for EntitiesPlugin {
                 (EnemyType::Soporte, 150),
                 (EnemyType::Limitador, 25),
             ])
-        }).add_systems(FixedUpdate, systems::spawn_enemies.run_if(in_state(EstadoJuego::JugandoEnAgua)))
-        .add_systems(FixedUpdate, systems::despawn_enemies.run_if(in_state(EstadoJuego::Transicion)));
+        })
+        .insert_resource(EnemySpawnTimer(Timer::from_seconds(2.0, TimerMode::Repeating)))
+        .add_systems(Update, systems::spawn_enemies.run_if(in_state(EstadoJuego::JugandoEnAgua)))
+        .add_systems(
+    OnEnter(EstadoJuego::Transicion),
+    systems::despawn_enemies,
+        );
     }
 }

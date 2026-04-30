@@ -41,12 +41,8 @@ pub fn recibir_grafo(
                                 node_id: start_node.id,
                             }
                         );
-
-                        println!("Nodo inicial: {}", start_node.id);
                     }
                 }
-
-                println!("📡 Grafo actualizado");
             }
         }
     }
@@ -85,10 +81,6 @@ pub fn spawn_opciones(
             targets.push(*a);
         }
     }
-
-    println!("Current node: {}", current);
-    println!("Edges: {:?}", graph.edges);
-    println!("Targets: {:?}", targets);
 
     for (i, target) in targets.iter().enumerate() {
 

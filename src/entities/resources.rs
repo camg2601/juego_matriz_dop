@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use bevy::ecs::resource::Resource;
+use bevy::{ecs::resource::Resource, time::Timer};
 
 use crate::entities::entity_types::EnemyType;
 
@@ -13,3 +13,6 @@ pub struct EnemyWeights {
 pub struct EnemyHealths {
     pub healths: HashMap<EnemyType, u32>
 }
+
+#[derive(Resource)]
+pub struct EnemySpawnTimer(pub Timer);

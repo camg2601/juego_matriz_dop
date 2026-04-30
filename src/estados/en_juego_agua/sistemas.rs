@@ -26,6 +26,7 @@ pub fn input_juego(
             }
             Accion::NavegarGrafo => {
                 next_state.set(EstadoJuego::Transicion);
+                info!("Transicionando grafo");
             }
             _ => {}
         }
