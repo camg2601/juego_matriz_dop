@@ -8,6 +8,11 @@ pub mod movimiento_grafo;
 pub use componentes::*;
 use crate::EstadoJuego;
 
+fn estados_validos(estados: Vec<EstadoJuego>) -> impl FnMut(Res<State<EstadoJuego>>) -> bool {
+    move |state: Res<State<EstadoJuego>>| {
+        estados.contains(state.get())
+    }
+}
 
 pub struct FisicasPlugin;
 
@@ -16,12 +21,12 @@ impl Plugin for FisicasPlugin {
         app.add_systems(
             FixedUpdate,
             movimiento_en_tierra::sistema_salto_y_gravedad
-                .run_if(in_state(EstadoJuego::JugandoEnTierra).or(in_state(EstadoJuego::Exterminio))),
+                .run_if(in_state(EstadoJuego::JugandoEnTierra)),
         )
         .add_systems(
             FixedUpdate,
             movimiento_en_agua::sistema_movimiento_en_agua
-                .run_if(in_state(EstadoJuego::JugandoEnAgua).or(in_state(EstadoJuego::Exterminio))),
+                .run_if(in_state(EstadoJuego::JugandoEnAgua)),
         )
         .add_systems(Update, movimiento_grafo::input_movimiento_grafo)
         ;

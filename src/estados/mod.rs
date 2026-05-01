@@ -20,5 +20,7 @@ pub enum EstadoJuego {
     Cinematica,
     GameOver,
     Transicion,
-    Exterminio,
+    StartGame,
+    InGame,
+    ObjectiveSetup,
 }
