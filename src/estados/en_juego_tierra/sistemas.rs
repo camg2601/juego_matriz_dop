@@ -24,7 +24,7 @@ pub fn input_juego(
                 // podría reiniciar nivel si corresponde
             }
             Accion::MoverseEnAgua => {
-                next_state.set(EstadoJuego::JugandoEnAgua);
+                next_state.set(EstadoJuego::InGame);
                 info!("En tierra");
             }
             _ => {}

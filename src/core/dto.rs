@@ -5,6 +5,7 @@ pub struct NodeDTO {
     pub id: usize,
     pub level: usize,
     pub objective: String,
+    pub clear: bool
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

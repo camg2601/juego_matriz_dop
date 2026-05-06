@@ -79,6 +79,14 @@ impl Graph {
         }
     }
 
+    pub fn clear_node(&mut self, node_id: usize) {
+        let node = &mut self.nodes[node_id];
+
+        if !node.clear {
+            node.clear = true;
+        }
+    }
+
     pub fn get_active_levels(&self) -> Vec<usize> {
         let mut levels: Vec<usize> = self.nodes
             .iter()
@@ -241,7 +249,6 @@ impl Graph {
 
         count = count.min(free_nodes.len());
 
-        // 🧠 seleccionar nodos y asignar objetivos
         for i in 0..count {
             let node_id = free_nodes[i];
 
@@ -381,6 +388,7 @@ impl Graph {
                 id: n.id,
                 level: n.level,
                 objective: n.objective.clone(),
+                clear: n.clear,
             })
             .collect();
 

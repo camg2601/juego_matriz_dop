@@ -46,7 +46,7 @@ impl Plugin for EntitiesPlugin {
             ])
         })
         .insert_resource(EnemySpawnTimer(Timer::from_seconds(2.0, TimerMode::Repeating)))
-        .add_systems(Update, systems::spawn_enemies.run_if(in_state(EstadoJuego::JugandoEnAgua)))
+        .add_systems(Update, systems::spawn_enemies.run_if(in_state(EstadoJuego::InGame)))
         .add_systems(
     OnEnter(EstadoJuego::Transicion),
     systems::despawn_enemies,

@@ -32,6 +32,8 @@ use entradas::EntradasPlugin;
 use mapas::MapasPlugin;
 use entities::EntitiesPlugin;
 
+use crate::objetivos::ObjectivesPlugin;
+
 fn main() {
 
     let (tx_req, rx_req) = unbounded();
@@ -59,6 +61,7 @@ fn main() {
             JugadorPlugin,
             VisualNodesPlugin,
             EntitiesPlugin,
+            ObjectivesPlugin,
         ))
         .run();
 }

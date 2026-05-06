@@ -19,9 +19,9 @@ pub struct ObjectiveState {
     pub target: u32,
     pub time_penalty: Option<u32>,
     pub time_remaining: Option<u32>,
-    pub requiresKills: bool,
-    pub requiresCollect: bool,
-    pub isTimed: bool,
+    pub requires_kills: bool,
+    pub requires_collect: bool,
+    pub is_timed: bool,
     pub completed: bool,
 }
 

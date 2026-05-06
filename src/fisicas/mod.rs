@@ -26,7 +26,7 @@ impl Plugin for FisicasPlugin {
         .add_systems(
             FixedUpdate,
             movimiento_en_agua::sistema_movimiento_en_agua
-                .run_if(in_state(EstadoJuego::JugandoEnAgua)),
+                .run_if(in_state(EstadoJuego::InGame)),
         )
         .add_systems(Update, movimiento_grafo::input_movimiento_grafo)
         ;

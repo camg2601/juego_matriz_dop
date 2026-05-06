@@ -47,6 +47,8 @@ pub fn start_core_thread(
 
                         let node_level = g.get_node_level(node_id).unwrap_or(0);
 
+                        g.clear_node(node_id);
+
                         if g.get_active_levels().len() == 1 || node_level == max_level_reached {
                             g.create_edge(next_level);
                             next_level += 1;

@@ -1,14 +1,16 @@
-use bevy::prelude::Plugin;
-use bevy::prelude::App;
-use bevy::prelude::Startup;
-use bevy::prelude::Update;
+use bevy::ecs::schedule::IntoScheduleConfigs;
+use bevy::prelude::*;
 
 pub mod systems;
 pub mod components;
 pub mod resources;
 pub mod events;
+pub mod objective;
 
 pub use resources::*;
+pub use systems::*;
+
+use crate::estados::EstadoJuego;
 
 pub struct ObjectivesPlugin;
 
@@ -19,13 +21,13 @@ impl Plugin for ObjectivesPlugin {
                 completed: false,
                 objective: ObjectiveType::Hallway,
                 progress: 0,
-                requiresCollect: false,
-                requiresKills: false,
+                requires_collect: false,
+                requires_kills: false,
                 target: 0,
                 time_penalty: Some(0),
                 time_remaining: Some(0),
-                isTimed: false,
+                is_timed: false,
             }
-        );
+        ).add_systems(OnEnter(EstadoJuego::Transicion), setup_objective);
     }
 }

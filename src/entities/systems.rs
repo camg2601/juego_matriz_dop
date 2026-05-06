@@ -81,6 +81,6 @@ pub fn despawn_enemies(
         commands.entity(e).despawn();
     }
 
-    next_state.set(EstadoJuego::JugandoEnAgua);
+    next_state.set(EstadoJuego::InGame);
 }
 

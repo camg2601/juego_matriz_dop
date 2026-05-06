@@ -22,5 +22,4 @@ pub enum EstadoJuego {
     Transicion,
     StartGame,
     InGame,
-    ObjectiveSetup,
 }
