@@ -19,13 +19,14 @@ pub fn recibir_grafo(
                         .iter()
                         .find(|n| n.level == 1)
                     {
-                        state.current_node = Some(start_node.id);
-
                         let _ = channels.tx.send(
                             CoreRequest::PlayerEnteredNode {
                                 node_id: start_node.id,
+                                last_node: state.current_node,
                             }
                         );
+
+                        state.current_node = Some(start_node.id);
                     }
                 }
             }

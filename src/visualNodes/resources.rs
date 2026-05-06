@@ -13,5 +13,6 @@ pub struct CoreChannels {
 #[derive(Resource, Default)]
 pub struct GameState {
     pub current_node: Option<usize>,
+    pub last_node: Option<usize>,
     pub graph: Option<GraphDTO>,
 }

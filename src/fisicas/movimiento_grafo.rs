@@ -31,11 +31,13 @@ pub fn input_movimiento_grafo(
             let dist = player_tf.translation.distance(tf.translation);
 
             if dist < 40.0 {
-                state.current_node = Some(nodo.id);
-
                 let _ = channels.tx.send(CoreRequest::PlayerEnteredNode {
                     node_id: nodo.id,
+                    last_node: -1,
                 });
+
+                state.last_node = state.current_node;
+                state.current_node = Some(nodo.id);
 
             }
         }

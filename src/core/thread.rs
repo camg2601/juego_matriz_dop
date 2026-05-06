@@ -8,7 +8,7 @@ use crate::core::graph::Graph;
 #[derive(Debug)]
 pub enum CoreRequest {
     StartGame {},
-    PlayerEnteredNode { node_id: usize },
+    PlayerEnteredNode { node_id: usize, last_node: isize},
 }
 
 #[derive(Debug)]
@@ -42,12 +42,15 @@ pub fn start_core_thread(
                     let _ = tx.send(CoreResponse::GraphUpdated(dto));
                 }
 
-                CoreRequest::PlayerEnteredNode { node_id } => {
+                CoreRequest::PlayerEnteredNode { node_id, last_node } => {
                     if let Some(g) = graph.as_mut() {
 
                         let node_level = g.get_node_level(node_id).unwrap_or(0);
 
-                        g.clear_node(node_id);
+                        if last_node != -1 {
+                            g.clear_node(last_node.try_into().unwrap());
+                        }
+                        
 
                         if g.get_active_levels().len() == 1 || node_level == max_level_reached {
                             g.create_edge(next_level);
