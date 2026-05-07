@@ -1,8 +1,19 @@
-use bevy::prelude::*;
-
-use crate::objetivos::{ObjectiveState, resources::ObjectiveType};
+use crate::{core::NodeDTO, objetivos::{ObjectiveState, resources::ObjectiveType}};
 
 impl ObjectiveType {
+    pub fn target_num(&self, level: &usize) -> u32 {
+        match self {
+            ObjectiveType::Hallway => 0,
+            ObjectiveType::Exterminate => 10 + *level as u32 * 2,
+            ObjectiveType::Defense
+            | ObjectiveType::Cameras
+            | ObjectiveType::Generators
+            | ObjectiveType::Artifacts
+            | ObjectiveType::Destroy
+            | ObjectiveType::Rescue => 0,
+        }
+    }
+
     pub fn kills(&self) -> bool {
         matches!(self, Self::Exterminate | Self::Defense)
     }
@@ -18,13 +29,13 @@ impl ObjectiveType {
     pub fn completed(&self, state: &ObjectiveState) -> bool {
         match self {
             ObjectiveType::Hallway => true,
-            ObjectiveType::Defense => state.progress >= state.target,
-            ObjectiveType::Exterminate => state.progress >= state.target,
-            ObjectiveType::Generators => state.progress >= state.target,
-            ObjectiveType::Artifacts => state.progress >= state.target,
             ObjectiveType::Cameras => state.time_remaining == Some(0),
-            ObjectiveType::Destroy => state.progress >= state.target,
-            ObjectiveType::Rescue => state.progress >= state.target,
+            ObjectiveType::Defense
+            | ObjectiveType::Exterminate
+            | ObjectiveType::Generators
+            | ObjectiveType::Artifacts
+            | ObjectiveType::Destroy
+            | ObjectiveType::Rescue => state.progress >= state.target,
         } 
     }
 

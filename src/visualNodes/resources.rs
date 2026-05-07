@@ -3,6 +3,7 @@ use crossbeam_channel::{Sender, Receiver};
 
 use crate::core::{CoreRequest, CoreResponse};
 use crate::core::GraphDTO;
+use crate::objetivos::ObjectiveState;
 
 #[derive(Resource)]
 pub struct CoreChannels {

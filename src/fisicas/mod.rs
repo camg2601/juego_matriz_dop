@@ -1,9 +1,10 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, ui::update};
 
 pub mod componentes;
 pub mod movimiento_en_tierra;
 pub mod movimiento_en_agua;
 pub mod movimiento_grafo;
+pub mod combat;
 
 pub use componentes::*;
 use crate::EstadoJuego;
@@ -29,6 +30,7 @@ impl Plugin for FisicasPlugin {
                 .run_if(in_state(EstadoJuego::InGame)),
         )
         .add_systems(Update, movimiento_grafo::input_movimiento_grafo)
+        .add_systems(Update, combat::attack_enemy)
         ;
     }
 }

@@ -1,3 +1,4 @@
+use bevy::ecs::schedule::IntoScheduleConfigs;
 use bevy::prelude::Plugin;
 use bevy::prelude::App;
 use bevy::prelude::Startup;
@@ -7,6 +8,7 @@ pub mod components;
 pub mod resources;
 pub mod systems;
 
+use bevy::state::condition::in_state;
 pub use resources::{CoreChannels, GameState};
 pub use systems::{
     recibir_grafo,
@@ -16,6 +18,8 @@ pub use systems::{
     iniciar_partida,
     minimapa,
 };
+
+use crate::estados::EstadoJuego;
 
 pub struct VisualNodesPlugin;
 
@@ -27,9 +31,10 @@ impl Plugin for VisualNodesPlugin {
         ))
         .add_systems(Update, (
             recibir_grafo,
-            spawn_opciones,
             actualizar_ui,
             minimapa,
-        ));
+        ))
+        .add_systems(Update, spawn_opciones.run_if(in_state(EstadoJuego::InGame)))
+        ;
     }
 }

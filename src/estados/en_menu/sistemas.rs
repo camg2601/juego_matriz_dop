@@ -16,7 +16,7 @@ pub fn input_menu(
     for evento in reader.read() {
         match evento.accion {
             Accion::MoverseEnTierra => {
-                next_state.set(EstadoJuego::JugandoEnTierra);
+                next_state.set(EstadoJuego::Transicion);
                 info!("Seleccionado INICIAR desde MENU");
             }
             Accion::Salir => {

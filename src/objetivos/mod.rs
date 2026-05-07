@@ -28,6 +28,7 @@ impl Plugin for ObjectivesPlugin {
                 time_remaining: Some(0),
                 is_timed: false,
             }
-        ).add_systems(OnEnter(EstadoJuego::Transicion), setup_objective);
+        ).add_systems(OnEnter(EstadoJuego::Transicion), setup_objective)
+        .add_systems(Update, handle_objectives.run_if(in_state(EstadoJuego::InGame)));
     }
 }

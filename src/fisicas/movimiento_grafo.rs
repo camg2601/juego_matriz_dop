@@ -2,12 +2,14 @@ use bevy::prelude::*;
 
 use crate::core::CoreRequest;
 use crate::entradas::{Accion, AccionEjecutada};
+use crate::estados::EstadoJuego;
 use crate::jugador::componentes::Jugador;
 use crate::visualNodes::{CoreChannels, GameState, components::NodoSeleccion};
 
 pub fn input_movimiento_grafo(
     mut reader: MessageReader<AccionEjecutada>,
     mut state: ResMut<GameState>,
+    mut next_state: ResMut<NextState<EstadoJuego>>,
     channels: Res<CoreChannels>,
     player_q: Query<&Transform, With<Jugador>>,
     nodos_q: Query<(&Transform, &NodoSeleccion)>,
@@ -33,12 +35,13 @@ pub fn input_movimiento_grafo(
             if dist < 40.0 {
                 let _ = channels.tx.send(CoreRequest::PlayerEnteredNode {
                     node_id: nodo.id,
-                    last_node: -1,
+                    last_node: state.current_node,
                 });
 
                 state.last_node = state.current_node;
                 state.current_node = Some(nodo.id);
 
+                next_state.set(EstadoJuego::Transicion);
             }
         }
     }

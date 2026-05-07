@@ -24,10 +24,6 @@ pub fn input_juego(
                 next_state.set(EstadoJuego::JugandoEnTierra);
                 info!("Reiniciando en tierra");
             }
-            Accion::NavegarGrafo => {
-                next_state.set(EstadoJuego::Transicion);
-                info!("Transicionando grafo");
-            }
             _ => {}
         }
     }

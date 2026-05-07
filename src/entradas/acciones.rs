@@ -22,7 +22,7 @@ pub enum Accion {
     Salir,
     Flotar,
     NavegarGrafo,
-    EliminarEnemigo,
+    Atacar,
 }
 
 #[derive(Message)]
