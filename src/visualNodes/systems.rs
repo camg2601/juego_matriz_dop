@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use crate::entradas::{Accion, AccionEjecutada};
 use crate::estados::EstadoJuego;
 use crate::objetivos::ObjectiveState;
+use crate::objetivos::components::EnemyKilledEvent;
 use crate::visualNodes::{CoreChannels, GameState};
 use crate::core::{CoreRequest, CoreResponse};
 use crate::visualNodes::components::*;
@@ -41,10 +42,8 @@ pub fn spawn_opciones(
     state: Res<GameState>,
     query: Query<Entity, With<NodoSeleccion>>,
     obj_state: Res<ObjectiveState>,
+    mut reader: MessageReader<Completed>,
 ) {
-    if !state.is_changed() {
-        return;
-    }
 
     for e in query.iter() {
         commands.entity(e).despawn();
@@ -71,42 +70,41 @@ pub fn spawn_opciones(
         }
     }
 
-    println!("{:?}", obj_state.completed);
-    println!("{:?}", obj_state.objective);
+    for _event in reader.read() {
+        if _event.complete {
+            for (i, target) in targets.iter().enumerate() {
 
-    if obj_state.completed {
-        for (i, target) in targets.iter().enumerate() {
+                let node_data = graph.nodes.iter().find(|n| n.id == *target);
 
-            let node_data = graph.nodes.iter().find(|n| n.id == *target);
+                let (nivel, objetivo) = if let Some(n) = node_data {
+                    (n.level, n.objective.clone())
+                } else {
+                    (0, "??".to_string())
+                };
 
-            let (nivel, objetivo) = if let Some(n) = node_data {
-                (n.level, n.objective.clone())
-            } else {
-                (0, "??".to_string())
-            };
+                let count = targets.len().max(1);
+                let screen_w = 1000.0;
+                let spacing = screen_w / (count as f32 + 1.0);
 
-            let count = targets.len().max(1);
-            let screen_w = 1000.0;
-            let spacing = screen_w / (count as f32 + 1.0);
+                let x = (i as f32 + 1.0) * spacing - screen_w / 2.0;
+                let y = 0.0;
 
-            let x = (i as f32 + 1.0) * spacing - screen_w / 2.0;
-            let y = 0.0;
-
-            commands.spawn((
-                Sprite {
-                    color: Color::srgb(1.0, 1.0, 0.0),
-                    custom_size: Some(Vec2::new(40.0, 40.0)),
-                    ..default()
-                },
-                Transform::from_xyz(x, y, 0.0),
-                NodoSeleccion { id: *target },
-            ))
-            .with_children(|parent| {
-                parent.spawn((
-                    Text2d::new(format!("L{}: {}", nivel, objetivo)),
-                    Transform::from_xyz(0.0, 30.0, 1.0),
-                ));
-            });
+                commands.spawn((
+                    Sprite {
+                        color: Color::srgb(1.0, 1.0, 0.0),
+                        custom_size: Some(Vec2::new(40.0, 40.0)),
+                        ..default()
+                    },
+                    Transform::from_xyz(x, y, 0.0),
+                    NodoSeleccion { id: *target },
+                ))
+                .with_children(|parent| {
+                    parent.spawn((
+                        Text2d::new(format!("L{}: {}", nivel, objetivo)),
+                        Transform::from_xyz(0.0, 30.0, 1.0),
+                    ));
+                });
+            }
         }
     }
 }
@@ -127,6 +125,7 @@ pub fn setup_ui(mut commands: Commands) {
 pub fn actualizar_ui(
     state: Res<GameState>,
     mut query: Query<&mut Text, With<TextoUI>>,
+    obj_state: Res<ObjectiveState>,
 ) {
     let graph = match &state.graph {
         Some(g) => g,
@@ -141,9 +140,11 @@ pub fn actualizar_ui(
     if let Some(node) = graph.nodes.iter().find(|n| n.id == current) {
         for mut text in query.iter_mut() {
             **text = format!(
-                "Nivel: {} | Objetivo: {}",
+                "Nivel: {} | Objetivo: {} | Progreso: {}/{}",
                 node.level,
-                node.objective
+                node.objective,
+                obj_state.progress,
+                obj_state.target,
             );
         }
     }
@@ -170,7 +171,6 @@ pub fn minimapa(
 
     let width = 300.0;
     let height = 200.0;
-
 
     commands.spawn((
         Sprite {

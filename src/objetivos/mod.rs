@@ -11,6 +11,7 @@ pub use resources::*;
 pub use systems::*;
 
 use crate::estados::EstadoJuego;
+use crate::objetivos::components::EnemyKilledEvent;
 
 pub struct ObjectivesPlugin;
 
@@ -24,11 +25,14 @@ impl Plugin for ObjectivesPlugin {
                 requires_collect: false,
                 requires_kills: false,
                 target: 0,
-                time_penalty: Some(0),
-                time_remaining: Some(0),
+                time_penalty: None,
+                time_remaining: None,
                 is_timed: false,
+                has_waves: false,
+                wave_size: None
             }
-        ).add_systems(OnEnter(EstadoJuego::Transicion), setup_objective)
+        ).add_message::<EnemyKilledEvent>()
+        .add_systems(OnEnter(EstadoJuego::Transicion), setup_objective)
         .add_systems(Update, handle_objectives.run_if(in_state(EstadoJuego::InGame)));
     }
 }

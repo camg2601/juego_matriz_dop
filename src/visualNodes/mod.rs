@@ -20,6 +20,7 @@ pub use systems::{
 };
 
 use crate::estados::EstadoJuego;
+use crate::visualNodes::components::Completed;
 
 pub struct VisualNodesPlugin;
 
@@ -34,6 +35,7 @@ impl Plugin for VisualNodesPlugin {
             actualizar_ui,
             minimapa,
         ))
+        .add_message::<Completed>()
         .add_systems(Update, spawn_opciones.run_if(in_state(EstadoJuego::InGame)))
         ;
     }

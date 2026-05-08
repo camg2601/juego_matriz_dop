@@ -10,3 +10,8 @@ pub struct TextoUI;
 
 #[derive(Component)]
 pub struct MiniMapa;
+
+#[derive(Message)]
+pub struct Completed {
+    pub complete: bool,
+}

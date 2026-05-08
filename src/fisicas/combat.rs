@@ -4,11 +4,13 @@ use bevy::prelude::*;
 use crate::entities::components::Enemy;
 use crate::entradas::*;
 use crate::jugador::componentes::Jugador;
+use crate::objetivos::components::{Dead, EnemyKilledEvent};
 
 pub fn attack_enemy (
     mut commands: Commands,
     mut query: Query<(Entity, &mut Enemy, &mut Transform), Without<Jugador>>,
     mut reader: MessageReader<AccionEjecutada>,
+    mut writer: MessageWriter<EnemyKilledEvent>,
     player_q: Query<&Transform, With<Jugador>>,
 ) {
     
@@ -33,6 +35,16 @@ pub fn attack_enemy (
 
             if dist <= 10.0 {
                 enemy.health = enemy.health.saturating_sub(damage);
+
+                if enemy.health <= 0 {
+                    writer.write(EnemyKilledEvent {
+                        entity,
+                    });
+
+                    commands.entity(entity)
+                        .insert(Dead)
+                        .despawn();
+                }
             }
         }
     }

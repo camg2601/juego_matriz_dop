@@ -4,16 +4,13 @@ use crate::core::{CoreRequest, CoreResponse};
 use crate::entities::components::Enemy;
 use crate::jugador::componentes::Jugador;
 use crate::objetivos::resources::ObjectiveState;
+use crate::visualNodes::components::Completed;
 use crate::visualNodes::{GameState};
 use crate::objetivos::*;
 
-fn hallway (
+fn visualObjective (
     mut commands: Commands,
 ) {
-
-}
-
-fn exterminate () {
 
 }
 
@@ -63,8 +60,6 @@ pub fn setup_objective(
 
     obj_state.completed = objective.completed(&obj_state);
 
-    println!("{:?}", objective.completed(&obj_state));
-
     println!(
         "🎯 Objetivo configurado: {:?} (target: {})",
         obj_state.objective, obj_state.target
@@ -74,8 +69,10 @@ pub fn setup_objective(
 pub fn handle_objectives(
     mut obj_state: ResMut<ObjectiveState>,
     mut query: Query<(Entity, &Enemy), Without<Jugador>>,
+    mut reader: MessageReader<EnemyKilledEvent>,
     mut state: ResMut<GameState>,
     mut commands: Commands,
+    mut writer: MessageWriter<Completed>,
 ) {
     let graph = match &state.graph {
         Some(g) => g,
@@ -97,15 +94,16 @@ pub fn handle_objectives(
         None => return,
     };
 
-    for (entity, enemy)  in &mut query {
-        if enemy.health <= 0 {
-            commands.entity(entity).despawn();
-            if obj_state.requires_kills {
-                obj_state.progress += 1;
-            }
-            println!("{:?}", obj_state.progress);
-        }
+    for _event in reader.read() {
+        obj_state.progress += 1;
+
+        println!("{:?}", obj_state.progress);
+        println!("{:?}", obj_state.target);
     }
 
-    obj_state.completed = objective.completed(&obj_state);
+    if objective.completed(&obj_state) {
+        writer.write(Completed {
+            complete: true,
+        });
+    }
 }
