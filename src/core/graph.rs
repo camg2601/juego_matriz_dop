@@ -61,7 +61,7 @@ impl Graph {
         weights.insert("Hallway".to_string(), 4.0);
         weights.insert("Exterminate".to_string(), 2.5);
         weights.insert("Destroy".to_string(), 2.0);
-        weights.insert("Generators".to_string(), 11.8);
+        weights.insert("Generators".to_string(), 1.8);
         weights.insert("Artifacts".to_string(), 1.5);
         weights.insert("Cameras".to_string(), 0.0);
         weights.insert("Defense".to_string(), 1.0);
