@@ -8,11 +8,16 @@ pub fn traducir_entradas_a_acciones(
     mut writer: MessageWriter<AccionEjecutada>,
 ) {
     for (tecla, accion) in mapa.teclado.iter() {
-        if teclado.just_pressed(*tecla) {
+        let activa = if *tecla == KeyCode::KeyM || *tecla == KeyCode::KeyE || *tecla == KeyCode::KeyF {
+            teclado.just_pressed(*tecla)
+        } else {
+            teclado.pressed(*tecla)
+        };
+
+        if activa {
             writer.write(AccionEjecutada {
                 accion: *accion,
             });
-            println!("Acción ejecutada: {:?}", accion);
         }
     }
 }

@@ -1,0 +1,32 @@
+use bevy::{ecs::resource::Resource, log::tracing_subscriber::fmt::time};
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ObjectiveType {
+    Hallway,
+    Defense,
+    Exterminate,
+    Generators,
+    Artifacts,
+    Cameras,
+    Destroy,
+    Rescue,
+}
+
+#[derive(Resource)]
+pub struct ObjectiveState {
+    pub objective: ObjectiveType,
+    pub progress: u32,
+    pub target: u32,
+    pub time_penalty: Option<u32>,
+    pub time_remaining: Option<u32>,
+    pub wave_size: Option<u32>,
+    pub requires_kills: bool,
+    pub has_waves: bool,
+    pub requires_visuals: bool,
+    pub requires_collect: bool,
+    pub is_timed: bool,
+    pub completed: bool,
+    pub wave_spawned: bool,
+}
+
+

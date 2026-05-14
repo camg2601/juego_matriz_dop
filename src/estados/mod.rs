@@ -19,4 +19,7 @@ pub enum EstadoJuego {
     Pausa,
     Cinematica,
     GameOver,
+    Transicion,
+    StartGame,
+    InGame,
 }
