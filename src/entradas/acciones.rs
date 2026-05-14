@@ -23,6 +23,7 @@ pub enum Accion {
     Flotar,
     NavegarGrafo,
     Atacar,
+    Contexto,
 }
 
 #[derive(Message)]

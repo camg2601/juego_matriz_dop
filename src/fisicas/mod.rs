@@ -31,6 +31,7 @@ impl Plugin for FisicasPlugin {
         )
         .add_systems(Update, movimiento_grafo::input_movimiento_grafo)
         .add_systems(Update, combat::attack_enemy)
+        .add_systems(Update, (combat::collect_artifacts, combat::repair_generator).run_if(in_state(EstadoJuego::InGame)))
         ;
     }
 }

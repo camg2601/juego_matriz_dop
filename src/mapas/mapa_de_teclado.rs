@@ -24,6 +24,7 @@ impl Default for MapaEntradas {
         teclado.insert(KeyCode::ArrowDown, Accion::MoverAtrasAgua);
         teclado.insert(KeyCode::KeyM, Accion::NavegarGrafo);
         teclado.insert(KeyCode::KeyE, Accion::Atacar);
+        teclado.insert(KeyCode::KeyF, Accion::Contexto);
 
         Self { teclado }
     }

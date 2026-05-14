@@ -8,7 +8,7 @@ use bevy::prelude::*;
 
 use std::collections::HashMap;
 
-use crate::{entities::{components::Enemy, entity_types::EnemyType, resources::{EnemyHealths, EnemySpawnTimer, EnemyWeights}}, estados::EstadoJuego};
+use crate::{entities::{components::{Destroy, Enemy}, entity_types::EnemyType, resources::{EnemyHealths, EnemySpawnTimer, EnemyWeights}}, estados::EstadoJuego, objetivos::{ObjectiveState, ObjectiveType}};
 
 fn pick_enemy(weights: &HashMap<EnemyType, f32>) -> EnemyType {
     let total: f32 = weights.values().sum();
@@ -33,6 +33,7 @@ pub fn spawn_enemies(
     weights: Res<EnemyWeights>,
     healths: Res<EnemyHealths>,
     windows: Query<&Window>,
+    mut obj_state: ResMut<ObjectiveState>,
 ) {
     timer.0.tick(time.delta());
 
@@ -40,11 +41,25 @@ pub fn spawn_enemies(
         return;
     }
 
+    println!("{:?}", obj_state.wave_spawned);
+
+    if obj_state.has_waves {
+        if obj_state.wave_spawned {
+            return;
+        }
+
+        obj_state.wave_spawned = true;
+    }
+
     let window = windows.single().unwrap();
 
     let mut rng = fastrand::Rng::new();
 
-    let quantity = rng.usize(2..6);
+    let quantity = if obj_state.has_waves {
+        obj_state.wave_size.unwrap_or(0) as usize
+    } else {
+        rng.usize(2..6)
+    };
 
     for _ in 0..quantity {
         let e_type = pick_enemy(&weights.weights);
@@ -82,5 +97,31 @@ pub fn despawn_enemies(
     }
 
     next_state.set(EstadoJuego::InGame);
+}
+
+pub fn spawn_destroy(
+    mut commands: Commands,
+    obj_state: Res<ObjectiveState>,
+) {
+    if obj_state.objective != ObjectiveType::Destroy {
+        return;
+    }
+
+    commands.spawn((
+            Sprite {
+                color: Color::srgb(1.0, 0.0, 0.0),
+                custom_size: Some(Vec2::new(40.0, 40.0)),
+                ..default()
+            },
+            Transform::from_xyz(0.0, 0.0, 0.0),
+            Enemy { e_type: EnemyType::Tanque, health: 1000 },
+            Destroy,
+        ))
+        .with_children(|parent| {
+            parent.spawn((
+                Text2d::new(format!("DESTROY")),
+                Transform::from_xyz(0.0, 25.0, 1.0),
+            ));
+        });
 }
 

@@ -8,3 +8,7 @@ pub struct Enemy {
     pub health: u32,
 }
 
+#[derive(Component)]
+pub struct Destroy; 
+
+

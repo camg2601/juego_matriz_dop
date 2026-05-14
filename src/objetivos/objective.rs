@@ -5,13 +5,17 @@ impl ObjectiveType {
         match self {
             ObjectiveType::Hallway => 0,
             ObjectiveType::Exterminate => 10 + *level as u32 * 2,
-            ObjectiveType::Defense
-            | ObjectiveType::Cameras
-            | ObjectiveType::Generators
-            | ObjectiveType::Artifacts
+            ObjectiveType::Defense => 5,
+            ObjectiveType::Artifacts => 5 + *level as u32 * 2,
+            ObjectiveType::Generators => 4,
+            ObjectiveType::Cameras
             | ObjectiveType::Destroy
             | ObjectiveType::Rescue => 0,
         }
+    }
+
+    pub fn wave_size(&self, level: &usize) -> u32 {
+        20 + *level as u32 * 2
     }
 
     pub fn kills(&self) -> bool {
@@ -26,15 +30,23 @@ impl ObjectiveType {
         matches!(self, Self::Cameras)
     }
 
+    pub fn needs_visuals(&self) -> bool {
+        matches!(self, Self::Defense | Self::Generators | Self::Artifacts | Self::Destroy | Self::Rescue )
+    }
+
+    pub fn waves(&self) -> bool {
+        matches!(self, Self::Defense)
+    }
+
     pub fn completed(&self, state: &ObjectiveState) -> bool {
         match self {
             ObjectiveType::Hallway => true,
-            ObjectiveType::Cameras => state.time_remaining == Some(0),
+            ObjectiveType::Cameras => true,
+            ObjectiveType::Destroy => state.progress <= state.target,
             ObjectiveType::Defense
             | ObjectiveType::Exterminate
             | ObjectiveType::Generators
             | ObjectiveType::Artifacts
-            | ObjectiveType::Destroy
             | ObjectiveType::Rescue => state.progress >= state.target,
         } 
     }

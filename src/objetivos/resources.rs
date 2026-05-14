@@ -1,6 +1,6 @@
 use bevy::{ecs::resource::Resource, log::tracing_subscriber::fmt::time};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectiveType {
     Hallway,
     Defense,
@@ -22,9 +22,11 @@ pub struct ObjectiveState {
     pub wave_size: Option<u32>,
     pub requires_kills: bool,
     pub has_waves: bool,
+    pub requires_visuals: bool,
     pub requires_collect: bool,
     pub is_timed: bool,
     pub completed: bool,
+    pub wave_spawned: bool,
 }
 
 

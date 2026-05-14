@@ -29,10 +29,14 @@ impl Plugin for ObjectivesPlugin {
                 time_remaining: None,
                 is_timed: false,
                 has_waves: false,
-                wave_size: None
+                wave_size: None,
+                requires_visuals: false,
+                wave_spawned: false,
             }
         ).add_message::<EnemyKilledEvent>()
         .add_systems(OnEnter(EstadoJuego::Transicion), setup_objective)
-        .add_systems(Update, handle_objectives.run_if(in_state(EstadoJuego::InGame)));
+        .add_systems(Update, (handle_objectives, visual_artifacts).run_if(in_state(EstadoJuego::InGame)))
+        .add_systems(OnExit(EstadoJuego::Transicion), visual_defense)
+        .add_systems(OnExit(EstadoJuego::Transicion), visual_generators);
     }
 }

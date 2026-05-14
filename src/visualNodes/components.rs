@@ -15,3 +15,8 @@ pub struct MiniMapa;
 pub struct Completed {
     pub complete: bool,
 }
+
+#[derive(Message)]
+pub struct Wave {
+    pub complete: bool,
+}

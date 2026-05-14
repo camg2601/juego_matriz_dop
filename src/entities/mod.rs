@@ -7,6 +7,7 @@ use bevy::prelude::Plugin;
 use bevy::prelude::App;
 use bevy::state::condition::in_state;
 use bevy::state::state::OnEnter;
+use bevy::state::state::OnExit;
 use bevy::time::Timer;
 use bevy::time::TimerMode;
 
@@ -50,6 +51,7 @@ impl Plugin for EntitiesPlugin {
         .add_systems(
     OnEnter(EstadoJuego::Transicion),
     systems::despawn_enemies,
-        );
+        )
+        .add_systems(OnExit(EstadoJuego::Transicion), systems::spawn_destroy);
     }
 }
